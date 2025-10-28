@@ -7,6 +7,95 @@ root = Tk()
 root.title("Sudoku!")
 
 ## Functions
+
+def difficulty_menu():
+    # Remove all widgets (starter question + buttons)
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    # Set a window size that fits everything comfortably
+    root.geometry("900x700")
+
+    difficulty_question = Label(
+        root,
+        text='How hard do you want it?!',
+        anchor=CENTER,
+        height=2,
+        width=30,
+        font=("Comic Sans MS", 36, "bold"),
+        fg="red",
+        wraplength=600
+    )
+    difficulty_question.pack(pady=(40, 30))
+
+    baby_button = Button(
+        root,
+        text='Baby Mode',
+        font=("Comic Sans MS", 24, "bold"),
+        fg="white",
+        bg="skyblue",
+        activebackground="darkred",
+        activeforeground="white",
+        relief=RAISED,
+        bd=5,
+        cursor="hand2",
+        width=14,
+        height=1,
+        command=generate_board
+    )
+    baby_button.pack(pady=10)
+
+    boring_button = Button(
+        root,
+        text='Boring',
+        font=("Comic Sans MS", 24, "bold"),
+        fg="white",
+        bg="grey",
+        activebackground="darkred",
+        activeforeground="white",
+        relief=RAISED,
+        bd=5,
+        cursor="hand2",
+        width=14,
+        height=1,
+        command=generate_board
+    )
+    boring_button.pack(pady=10)
+
+    hard_button = Button(
+        root,
+        text='I can take it',
+        font=("Comic Sans MS", 24, "bold"),
+        fg="white",
+        bg="red",
+        activebackground="darkred",
+        activeforeground="white",
+        relief=RAISED,
+        bd=5,
+        cursor="hand2",
+        width=14,
+        height=1,
+        command=generate_board
+    )
+    hard_button.pack(pady=10)
+
+    extreme_button = Button(
+        root,
+        text='EXXXTREME!!!',
+        font=("Comic Sans MS", 24, "bold"),
+        fg="white",
+        bg="darkred",
+        activebackground="black",
+        activeforeground="white",
+        relief=RAISED,
+        bd=5,
+        cursor="hand2",
+        width=14,
+        height=1,
+        command=generate_board
+    )
+    extreme_button.pack(pady=10)
+
 def generate_puzzle():
     # Remove all widgets (starter question + buttons)
     for widget in root.winfo_children():
@@ -69,6 +158,9 @@ def generate_board():
             )
             buttons[r][c] = btn
 
+################
+# Opening Screen
+################
 starter_question = Label(
     root,
     text='Do you want to play Sudoku?!',
@@ -94,7 +186,7 @@ confirm_button = Button(
     cursor="hand2",
     width=10,
     height=2,
-    command = generate_board
+    command = difficulty_menu
 )
 confirm_button.pack(pady=20)
 
@@ -114,4 +206,12 @@ loser_button = Button(
     command = close_app
 )
 loser_button.pack(pady=20)
+
+################
+  # Difficulty
+################
+
+
+
+
 root.mainloop()
