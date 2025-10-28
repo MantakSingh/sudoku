@@ -14,17 +14,17 @@ def generate_puzzle():
 
     # Create Empty Board
     sudoku_array = [[0 for _ in range(9)] for _ in range(9)]
-    used_numbers = []
 
-    # First row
-    for index in range(9):
-        while sudoku_array[0][index] == 0:
-            placeholder_value = random.randint(1,9)
-            if placeholder_value not in used_numbers:
-                sudoku_array[0][index] = placeholder_value
-                used_numbers.append(placeholder_value)
-    
-    print(sudoku_array)
+    used_numbers = []
+    for row_value in range(9):
+        for column_value in range(9):
+            while sudoku_array[row_value][column_value] == 0:
+                placeholder_value = random.randint(1,9)
+                if placeholder_value not in used_numbers:
+                    sudoku_array[row_value][column_value] = placeholder_value
+                    used_numbers.append(placeholder_value)
+        used_numbers.clear()
+    return sudoku_array
 
 def close_app():
     root.destroy()
@@ -34,6 +34,7 @@ def generate_board():
     for widget in root.winfo_children():
         widget.destroy()
 
+    current_puzzle = generate_puzzle()
     board_size = 540  # total pixel size of the board
     cell_size = board_size // 9  # 60 pixels per cell
 
@@ -55,7 +56,7 @@ def generate_board():
         for c in range(9):
             btn = Button(
                 root,
-                text="",
+                text= current_puzzle[r][c],
                 font=("Comic Sans MS", 20, "bold"),
                 bg="white",
                 relief=RIDGE
