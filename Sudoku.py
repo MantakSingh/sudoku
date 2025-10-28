@@ -1,11 +1,40 @@
 from tkinter import *
 from tkinter import ttk
 
-root = Tk()
-root.title("Sudoku!")
-
+## Functions
 def close_app():
     root.destroy()
+
+def show_board():
+    # Remove all widgets (starter question + buttons)
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    # Configure the 9x9 grid
+    for i in range(9):
+        root.grid_rowconfigure(i, weight=1)
+        root.grid_columnconfigure(i, weight=1)
+
+    # Build 9x9 grid of cells
+    for r in range(9):
+        for c in range(9):
+            # Outer frame acts as border
+            border = Frame(root, bg="black", width=60, height=60)
+            border.grid(row=r, column=c, padx=1, pady=1, sticky="nsew")
+            border.grid_propagate(False)
+
+            # Inner frame gives white background and padding
+            cell = Frame(border, bg="white")
+            cell.pack(expand=True, fill="both", padx=1, pady=1)
+
+            # ttk Button inside the cell
+            btn = ttk.Button(cell, text="")
+            btn.pack(expand=True, fill="both")
+
+
+## Initialize GUI
+root = Tk()
+root.title("Sudoku!")
 
 starter_question = Label(
     root,
@@ -31,7 +60,8 @@ confirm_button = Button(
     bd=5,                        # border thickness
     cursor="hand2",              # hand cursor on hover
     width=10,                    # adjusts button width
-    height=2                     # adjusts button height
+    height=2,                     # adjusts button height
+    command = show_board
 )
 confirm_button.pack(pady=20)
 
@@ -51,26 +81,8 @@ loser_button = Button(
     command = close_app
 )
 loser_button.pack(pady=20)
-'''
-for i in range(9):
-    root.grid_rowconfigure(i, weight=1)
-    root.grid_columnconfigure(i, weight=1)
 
-# Build 9x9 grid of cells
-for r in range(9):
-    for c in range(9):
-        # Outer frame acts as border
-        border = Frame(root, bg="black", width=60, height=60)
-        border.grid(row=r, column=c, padx=1, pady=1, sticky="nsew")
-        border.grid_propagate(False)
 
-        # Inner frame gives white background and padding
-        cell = Frame(border, bg="white")
-        cell.pack(expand=True, fill="both", padx=1, pady=1)
 
-        # ttk Button inside the cell
-        btn = ttk.Button(cell, text="")
-        btn.pack(expand=True, fill="both")
-'''
 root.geometry("600x600")
 root.mainloop()
