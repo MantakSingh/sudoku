@@ -8,13 +8,20 @@ for i in range(9):
     root.grid_rowconfigure(i, weight=1)
     root.grid_columnconfigure(i, weight=1)
 
+# Build 9x9 grid of cells
 for r in range(9):
     for c in range(9):
-        frame = Frame(root, width=60, height=60)
-        frame.grid(row=r, column=c, padx=2, pady=2, sticky="nsew")
-        frame.grid_propagate(False)  # keep square shape
+        # Outer frame acts as border
+        border = Frame(root, bg="black", width=60, height=60)
+        border.grid(row=r, column=c, padx=1, pady=1, sticky="nsew")
+        border.grid_propagate(False)
 
-        btn = ttk.Button(frame, text="")
+        # Inner frame gives white background and padding
+        cell = Frame(border, bg="white")
+        cell.pack(expand=True, fill="both", padx=1, pady=1)
+
+        # ttk Button inside the cell
+        btn = ttk.Button(cell, text="")
         btn.pack(expand=True, fill="both")
 
 root.geometry("600x600")
