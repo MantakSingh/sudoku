@@ -1,11 +1,32 @@
 from tkinter import *
 from tkinter import ttk
+import random
 
 ## Functions
+
+def generate_puzzle():
+    # Remove all widgets (starter question + buttons)
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    # Create Empty Board
+    sudoku_array = [[0 for _ in range(9)] for _ in range(9)]
+    used_numbers = []
+
+    # First row
+    for index in range(9):
+        while sudoku_array[0][index] == 0:
+            placeholder_value = random.randint(1,9)
+            if placeholder_value not in used_numbers:
+                sudoku_array[0][index] = placeholder_value
+                used_numbers.append(placeholder_value)
+    
+
+    print(sudoku_array)
 def close_app():
     root.destroy()
 
-def show_board():
+def generate_board():
     # Remove all widgets (starter question + buttons)
     for widget in root.winfo_children():
         widget.destroy()
@@ -61,7 +82,7 @@ confirm_button = Button(
     cursor="hand2",              # hand cursor on hover
     width=10,                    # adjusts button width
     height=2,                     # adjusts button height
-    command = show_board
+    command = generate_puzzle
 )
 confirm_button.pack(pady=20)
 
@@ -81,8 +102,6 @@ loser_button = Button(
     command = close_app
 )
 loser_button.pack(pady=20)
-
-
 
 root.geometry("600x600")
 root.mainloop()
