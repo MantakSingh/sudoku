@@ -43,7 +43,7 @@ def difficulty_menu():
         cursor="hand2",
         width=14,
         height=1,
-        command=generate_board('Baby')
+        command=lambda: generate_board('Baby')
     )
     baby_button.pack(pady=10)
 
@@ -60,7 +60,7 @@ def difficulty_menu():
         cursor="hand2",
         width=14,
         height=1,
-        command=generate_board('Normal')
+        command=lambda: generate_board('Normal')
     )
     boring_button.pack(pady=10)
 
@@ -77,7 +77,7 @@ def difficulty_menu():
         cursor="hand2",
         width=14,
         height=1,
-        command=generate_board('Hard')
+        command=lambda: generate_board('Hard')
     )
     hard_button.pack(pady=10)
 
@@ -94,28 +94,19 @@ def difficulty_menu():
         cursor="hand2",
         width=14,
         height=1,
-        command=generate_board('Extreme')
+        command=lambda: generate_board('Extreme')
     )
     extreme_button.pack(pady=10)
 
 def generate_puzzle(user_level: str):
-    # Remove all widgets (starter question + buttons)
-    for widget in root.winfo_children():
-        widget.destroy()
-
     # Create Empty Board
     sudoku_array = [[0 for _ in range(9)] for _ in range(9)]
 
     def is_valid(board, row, col, num):
-        # Check row
         if num in board[row]:
             return False
-
-        # Check column
         if num in [board[r][col] for r in range(9)]:
             return False
-
-        # Check cell
         start_row, start_col = (row // 3) * 3, (col // 3) * 3
         for r in range(start_row, start_row + 3):
             for c in range(start_col, start_col + 3):
@@ -126,45 +117,29 @@ def generate_puzzle(user_level: str):
     def fill_board(board):
         for row in range(9):
             for col in range(9):
-                if board[row][col] == 0:  # find empty cell
+                if board[row][col] == 0:
                     nums = list(range(1, 10))
-                    random.shuffle(nums)  # random order for variety
+                    random.shuffle(nums)
                     for num in nums:
                         if is_valid(board, row, col, num):
                             board[row][col] = num
-                            if fill_board(board):  # recursive call
+                            if fill_board(board):
                                 return True
-                            board[row][col] = 0  # backtrack if stuck
-                    return False  # no valid number found → backtrack
-        return True  # board completely filled
+                            board[row][col] = 0
+                    return False
+        return True
 
-    # Fill board
     fill_board(sudoku_array)
-    
-    # Keep a record of this
-    solved_board = sudoku_array
 
-    # Adjust difficulty
-    def diff_level(user_level):
-        removed_squares = 0
+    # Remove numbers based on difficulty
+    removed_squares = {'Baby': 1, 'Normal': 40, 'Hard': 60, 'Extreme': 64}.get(user_level, 40)
 
-        if user_level == 'Baby':
-            removed_squares = 1 # Literally have one square to fill out haha
-        if user_level == 'Normal':
-            removed_squares = 60 # Random
-        if user_level == 'Hard':
-            removed_squares = 40 # Random
-        if user_level == 'Extreme':
-            removed_squares = 64 # 17 is the minimum solvable squares
-
-        # Eliminate squares
-        while removed_squares != 0:
-            random_square = sudoku_array[random.randint(1,9)][random.randint(1,9)]
-            if random_square == "":
-                continue
-            else:
-                random_square = ""
-                removed_squares -= 1
+    while removed_squares > 0:
+        row = random.randint(0, 8)
+        col = random.randint(0, 8)
+        if sudoku_array[row][col] != 0:
+            sudoku_array[row][col] = 0
+            removed_squares -= 1
 
     return sudoku_array
 
@@ -197,9 +172,10 @@ def generate_board(user_level: str):
     buttons = [[None for _ in range(9)] for _ in range(9)]
     for r in range(9):
         for c in range(9):
+            value = current_puzzle[r][c]
             btn = Button(
                 root,
-                text= current_puzzle[r][c],
+                text= "" if value == 0 else str(value),
                 font=("Comic Sans MS", 20, "bold"),
                 bg="white",
                 relief=RIDGE
