@@ -6,7 +6,9 @@ import random
 root = Tk()
 root.title("Sudoku!")
 
-## Functions
+################
+   # Functions
+################
 
 def difficulty_menu():
     # Remove all widgets (starter question + buttons)
@@ -41,7 +43,7 @@ def difficulty_menu():
         cursor="hand2",
         width=14,
         height=1,
-        command=generate_board
+        command=generate_board('Baby')
     )
     baby_button.pack(pady=10)
 
@@ -58,7 +60,7 @@ def difficulty_menu():
         cursor="hand2",
         width=14,
         height=1,
-        command=generate_board
+        command=generate_board('Normal')
     )
     boring_button.pack(pady=10)
 
@@ -75,7 +77,7 @@ def difficulty_menu():
         cursor="hand2",
         width=14,
         height=1,
-        command=generate_board
+        command=generate_board('Hard')
     )
     hard_button.pack(pady=10)
 
@@ -92,11 +94,11 @@ def difficulty_menu():
         cursor="hand2",
         width=14,
         height=1,
-        command=generate_board
+        command=generate_board('Extreme')
     )
     extreme_button.pack(pady=10)
 
-def generate_puzzle():
+def generate_puzzle(user_level: str):
     # Remove all widgets (starter question + buttons)
     for widget in root.winfo_children():
         widget.destroy()
@@ -104,26 +106,78 @@ def generate_puzzle():
     # Create Empty Board
     sudoku_array = [[0 for _ in range(9)] for _ in range(9)]
 
-    used_numbers = []
-    for row_value in range(9):
-        for column_value in range(9):
-            while sudoku_array[row_value][column_value] == 0:
-                placeholder_value = random.randint(1,9)
-                if placeholder_value not in used_numbers:
-                    sudoku_array[row_value][column_value] = placeholder_value
-                    used_numbers.append(placeholder_value)
-        used_numbers.clear()
+    def is_valid(board, row, col, num):
+        # Check row
+        if num in board[row]:
+            return False
+
+        # Check column
+        if num in [board[r][col] for r in range(9)]:
+            return False
+
+        # Check cell
+        start_row, start_col = (row // 3) * 3, (col // 3) * 3
+        for r in range(start_row, start_row + 3):
+            for c in range(start_col, start_col + 3):
+                if board[r][c] == num:
+                    return False
+        return True
+
+    def fill_board(board):
+        for row in range(9):
+            for col in range(9):
+                if board[row][col] == 0:  # find empty cell
+                    nums = list(range(1, 10))
+                    random.shuffle(nums)  # random order for variety
+                    for num in nums:
+                        if is_valid(board, row, col, num):
+                            board[row][col] = num
+                            if fill_board(board):  # recursive call
+                                return True
+                            board[row][col] = 0  # backtrack if stuck
+                    return False  # no valid number found → backtrack
+        return True  # board completely filled
+
+    # Fill board
+    fill_board(sudoku_array)
+    
+    # Keep a record of this
+    solved_board = sudoku_array
+
+    # Adjust difficulty
+    def diff_level(user_level):
+        removed_squares = 0
+
+        if user_level == 'Baby':
+            removed_squares = 1 # Literally have one square to fill out haha
+        if user_level == 'Normal':
+            removed_squares = 60 # Random
+        if user_level == 'Hard':
+            removed_squares = 40 # Random
+        if user_level == 'Extreme':
+            removed_squares = 64 # 17 is the minimum solvable squares
+
+        # Eliminate squares
+        while removed_squares != 0:
+            random_square = sudoku_array[random.randint(1,9)][random.randint(1,9)]
+            if random_square == "":
+                continue
+            else:
+                random_square = ""
+                removed_squares -= 1
+
     return sudoku_array
+
 
 def close_app():
     root.destroy()
 
-def generate_board():
+def generate_board(user_level: str):
     # Remove all widgets
     for widget in root.winfo_children():
         widget.destroy()
 
-    current_puzzle = generate_puzzle()
+    current_puzzle = generate_puzzle(user_level)
     board_size = 540  # total pixel size of the board
     cell_size = board_size // 9  # 60 pixels per cell
 
@@ -206,12 +260,5 @@ loser_button = Button(
     command = close_app
 )
 loser_button.pack(pady=20)
-
-################
-  # Difficulty
-################
-
-
-
 
 root.mainloop()
